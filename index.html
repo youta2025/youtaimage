@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>由他图片处理神器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 添加必要的库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
+    <!-- 添加图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <div class="logo-container">
+                <i class="fas fa-magic"></i>
+                <h1>由他图片处理神器</h1>
+            </div>
+            <p class="subtitle">简单、快速、专业的图片处理工具</p>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 上传区域 -->
+            <div class="upload-card" id="uploadArea">
+                <input type="file" id="fileInput" accept="image/*" hidden>
+                <div class="upload-box">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>点击或拖拽图片到这里</h3>
+                    <p>支持 JPG、PNG、WEBP 等格式</p>
+                </div>
+            </div>
+
+            <!-- 编辑区域 -->
+            <div class="edit-container" id="editArea" style="display: none;">
+                <!-- 预览卡片 -->
+                <div class="preview-card">
+                    <h3>预览</h3>
+                    <div class="preview-box">
+                        <img id="previewImage" alt="预览图片">
+                    </div>
+                </div>
+
+                <!-- 工具卡片 -->
+                <div class="tools-container">
+                    <div class="tools-grid">
+                        <!-- 调整尺寸卡片 -->
+                        <div class="tool-card" data-tool="resize">
+                            <div class="tool-card-header">
+                                <i class="fas fa-expand"></i>
+                                <h3>调整尺寸</h3>
+                            </div>
+                            <div class="tool-card-content">
+                                <div class="input-group">
+                                    <label>宽度 (px)</label>
+                                    <input type="number" id="widthInput" placeholder="输入宽度">
+                                </div>
+                                <div class="input-group">
+                                    <label>高度 (px)</label>
+                                    <input type="number" id="heightInput" placeholder="输入高度">
+                                </div>
+                                <div class="size-info">
+                                    <span>原始尺寸：<span id="originalSize">0 x 0</span></span>
+                                </div>
+                                <button class="tool-apply-btn" id="resizeBtn">
+                                    <i class="fas fa-check"></i>
+                                    应用调整
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 压缩图片卡片 -->
+                        <div class="tool-card" data-tool="compress">
+                            <div class="tool-card-header">
+                                <i class="fas fa-compress-arrows-alt"></i>
+                                <h3>压缩图片</h3>
+                            </div>
+                            <div class="tool-card-content">
+                                <div class="input-group">
+                                    <label>压缩质量</label>
+                                    <div class="quality-control">
+                                        <input type="range" id="qualitySlider" min="0" max="100" value="80">
+                                        <span id="qualityValue">80%</span>
+                                    </div>
+                                    <div class="file-size-info">
+                                        <p>原始大小：<span id="originalFileSize">0 KB</span></p>
+                                        <p>预计大小：<span id="estimatedFileSize">0 KB</span></p>
+                                        <p class="compression-ratio">压缩率：<span id="compressionRatio">0%</span></p>
+                                    </div>
+                                </div>
+                                <button class="tool-apply-btn" id="compressBtn">
+                                    <i class="fas fa-check"></i>
+                                    开始压缩
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 水印工具卡片 -->
+                        <div class="tool-card" data-tool="watermark">
+                            <div class="tool-card-header">
+                                <i class="fas fa-signature"></i>
+                                <h3>添加水印</h3>
+                            </div>
+                            <div class="tool-card-content">
+                                <div class="input-group">
+                                    <label>水印文字</label>
+                                    <input type="text" id="watermarkText" placeholder="输入水印文字">
+                                </div>
+                                <div class="input-group">
+                                    <label>字体大小</label>
+                                    <div class="font-size-control">
+                                        <input type="range" id="watermarkSize" min="12" max="72" value="24">
+                                        <span id="fontSizeValue">24px</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>水印位置</label>
+                                    <div class="position-grid">
+                                        <button class="position-btn" data-position="top-left">↖</button>
+                                        <button class="position-btn" data-position="top-center">↑</button>
+                                        <button class="position-btn" data-position="top-right">↗</button>
+                                        <button class="position-btn" data-position="middle-left">←</button>
+                                        <button class="position-btn" data-position="middle-center">●</button>
+                                        <button class="position-btn" data-position="middle-right">→</button>
+                                        <button class="position-btn" data-position="bottom-left">↙</button>
+                                        <button class="position-btn" data-position="bottom-center">↓</button>
+                                        <button class="position-btn active" data-position="bottom-right">↘</button>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>水印颜色</label>
+                                    <input type="color" id="watermarkColor" value="#000000">
+                                </div>
+                                <div class="input-group">
+                                    <label>透明度</label>
+                                    <div class="quality-control">
+                                        <input type="range" id="watermarkOpacity" min="0" max="100" value="50">
+                                        <span id="opacityValue">50%</span>
+                                    </div>
+                                </div>
+                                <button class="tool-apply-btn" id="watermarkBtn">
+                                    <i class="fas fa-check"></i>
+                                    添加水印
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 去除背景卡片 -->
+                        <div class="tool-card" data-tool="remove-bg">
+                            <div class="tool-card-header">
+                                <i class="fas fa-cut"></i>
+                                <h3>去除背景</h3>
+                            </div>
+                            <div class="tool-card-content">
+                                <p class="tool-description">一键智能去除图片背景</p>
+                                <button class="tool-apply-btn" id="bgRemoveBtn">
+                                    <i class="fas fa-magic"></i>
+                                    去除背景
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 裁剪图片卡片 -->
+                        <div class="tool-card" data-tool="crop">
+                            <div class="tool-card-header">
+                                <i class="fas fa-crop"></i>
+                                <h3>裁剪图片</h3>
+                            </div>
+                            <div class="tool-card-content">
+                                <div class="crop-container">
+                                    <div class="crop-area" id="cropArea">
+                                        <canvas id="cropCanvas"></canvas>
+                                        <div class="crop-frame" id="cropFrame">
+                                            <div class="resize-handle top-left"></div>
+                                            <div class="resize-handle top-right"></div>
+                                            <div class="resize-handle bottom-left"></div>
+                                            <div class="resize-handle bottom-right"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="crop-controls">
+                                    <div class="input-group">
+                                        <label>裁剪尺寸</label>
+                                        <div class="size-inputs">
+                                            <input type="number" id="cropWidth" placeholder="宽度">
+                                            <span>x</span>
+                                            <input type="number" id="cropHeight" placeholder="高度">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="tool-apply-btn" id="cropBtn">
+                                    <i class="fas fa-check"></i>
+                                    应用裁剪
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下载按钮 -->
+                <div class="download-container">
+                    <button class="download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i>
+                        下载处理后的图片
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="footer">
+            <div class="promotion-card">
+                <i class="fas fa-heart"></i>
+                <p>专注分享真实有料的内容，更多实用工具搜索微信公众号：由他工具箱</p>
+            </div>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html> 
